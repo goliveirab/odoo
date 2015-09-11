@@ -2,145 +2,144 @@
 
 .. queue:: backend/series
 
-=================
-Building a Module
-=================
+=======================
+Desarrollo de un Módulo
+=======================
 
 .. warning::
 
-    This tutorial requires :ref:`having installed Odoo <setup/install>`
+    Este tutorial requiere :ref:`tener Odoo instalado <setup/install>`
 
-Start/Stop the Odoo server
-==========================
+Iniciar/Detener el servidor Odoo
+================================
 
-Odoo uses a client/server architecture in which clients are web browsers
-accessing the Odoo server via RPC.
+Odoo utiliza una arquitectura cliente/servidor en la cual los clientes son navegadores web
+que accesan el servidor Odoo a través de RPC.
 
-Business logic and extension is generally performed on the server side,
-although supporting client features (e.g. new data representation such as
-interactive maps) can be added to the client.
+La lógica del negocio y sus extensiones generalmente son ejecutadas del lado del servidor,
+además el soporte a características del cliente (ej. representación de datos nuevos como
+mapas interactivos) puede ser agregada al cliente.
 
-In order to start the server, simply invoke the command :ref:`odoo.py
-<reference/cmdline>` in the shell, adding the full path to the file if
-necessary:
+Para iniciar el servidor, simplemente aplique el comando :ref:`odoo.py
+<reference/cmdline>` en la terminal, si es necesario agregue la ruta completa al
+archivo:
 
 .. code:: bash
 
     odoo.py
 
-The server is stopped by hitting ``Ctrl-C`` twice from the terminal, or by
-killing the corresponding OS process.
+El servidor es detenido pulsando ``Ctrl-C`` dos veces desde la terminal, o
+matando el proceso correspondiente.
 
-Build an Odoo module
-====================
+Desarrollo de un módulo Odoo
+============================
 
-Both server and client extensions are packaged as *modules* which are
-optionally loaded in a *database*.
+Tanto las extensiones del servidor como del cliente son empaquetadas como *modulos* los cuales
+opcionalmente son cargados en la *base de datos*.
 
-Odoo modules can either add brand new business logic to an Odoo system, or
-alter and extend existing business logic: a module can be created to add your
-country's accounting rules to Odoo's generic accounting support, while the
-next module adds support for real-time visualisation of a bus fleet.
+Los módulos Odoo pueden agregar nueva lógica de negocio a un sistema Odoo, o
+alterar una lógica de negocio existente: puede crear un módulo para agregar las
+reglas de contabilidad de su país al soporte general de contabilidad de Odoo, mientras 
+el siguiente módulo agrega soporte para la visualizacion en tiempo real de una flota de autobises.
 
-Everything in Odoo thus starts and ends with modules.
+Por consiguiente, todo en Odoo comienza y termina con módulos.
 
-Composition of a module
------------------------
+Composición de un módulo
+------------------------
 
-An Odoo module can contain a number of elements:
+Un módulo de Odoo puede contener varios elementos:
 
-Business objects
-    declared as Python classes, these resources are automatically persisted
+Objetos de negocio
+    declarados como clases de Python, these resources are automatically persisted
     by Odoo based on their configuration
 
-Data files
-    XML or CSV files declaring metadata (views or workflows), configuration
-    data (modules parameterization), demonstration data and more
+Archivos de datos
+    archivos XML o CSV que declaran metadatos (vistas o flujos de trabajo), configuración
+    de datos (parametrización de datos), datos de demostración y mas
 
-Web controllers
-    Handle requests from web browsers
+Controladores web
+    gestionan las peticiones de los navegadores web
 
-Static web data
-    Images, CSS or javascript files used by the web interface or website
+Datos web esstáticos
+    archivos de imagenes, CSS o javascript usados por la interfaz web o sitio web
 
-Module structure
-----------------
+Estructura del módulo
+---------------------
 
-Each module is a directory within a *module directory*. Module directories
-are specified by using the :option:`--addons-path <odoo.py --addons-path>`
-option.
+Cada modulo es un directorio dentro de un *directorio de módulo*. Los directorios de
+módulos con específicados usando la opción :option:`--addons-path <odoo.py --addons-path>`.
 
 .. tip::
     :class: aphorism
 
-    most command-line options can also be set using :ref:`a configuration
-    file <reference/cmdline/config>`
+    muchas de las opciones de la línea de comandos pueden ser configuradas usando :ref:` un archivo de
+    configuración <reference/cmdline/config>`
 
-An Odoo module is declared by its :ref:`manifest <reference/module/manifest>`.
-See the :ref:`manifest documentation <reference/module/manifest>` information
+Un módulo de Odoo es declarado por su :ref:`manifest <reference/module/manifest>`.
+Vea la :ref:`manifest documentation <reference/module/manifest>` information
 about it.
 
-A module is also a
-`Python package <http://docs.python.org/2/tutorial/modules.html#packages>`_
-with a ``__init__.py`` file, containing import instructions for various Python
-files in the module.
+Un módulo es tambien un
+`paquete Python <http://docs.python.org/2/tutorial/modules.html#packages>`_
+con un archivo ``__init__.py``, que contiene instrucciones para la importación de varios archivos
+Python en el módulo.
 
-For instance, if the module has a single ``mymodule.py`` file ``__init__.py``
-might contain::
+Por ejemplo, si el módulo tiene un único archivo ``mymodule.py``, el ``__init__.py``
+puede contener::
 
     from . import mymodule
 
-Odoo provides a mechanism to help set up a new module, :ref:`odoo.py
-<reference/cmdline/server>` has a subcommand :ref:`scaffold
-<reference/cmdline/scaffold>` to create an empty module:
+Odoo provee mecanismos para ayudar a la configuración de un módulo nuevo, :ref:`odoo.py
+<reference/cmdline/server>` tiene un sub-comando :ref:`scaffold
+<reference/cmdline/scaffold>` para crear un módulo vacío:
 
 .. code-block:: console
 
-    $ odoo.py scaffold <module name> <where to put it>
+    $ odoo.py scaffold <nombre del módulo> <donde se colocará>
 
-The command creates a subdirectory for your module, and automatically creates a
-bunch of standard files for a module. Most of them simply contain commented code
-or XML. The usage of most of those files will be explained along this tutorial.
+El comando crea un sub-directorio para su módulo, y crea automáticamente un
+monton de archivos estándar de un módulo. Muchos de ellos solo contiene códido comentado
+o XML. El uso de muchos de estos archivos sera explicada a lo largo de este tutorial.
 
 .. exercise:: Module creation
 
-    Use the command line above to  create an empty module Open Academy, and
-    install it in Odoo.
+    Use la línea de comando anterior para crear un módulo Open Academy vacío, e
+    instalelo en Odoo.
 
     .. only:: solutions
 
-        #. Invoke the command ``odoo.py scaffold openacademy addons``.
-        #. Adapt the manifest file to your module.
-        #. Don't bother about the other files.
+        #. Escriba el comando ``odoo.py scaffold openacademy addons``.
+        #. Adapte el archivo manifiesto a su módulo.
+        #. No se preocupe por los otros archivos.
 
         .. patch::
 
-Object-Relational Mapping
--------------------------
+Mapeo Objeto-Relacional
+-----------------------
 
-A key component of Odoo is the :abbr:`ORM (Object-Relational Mapping)` layer.
-This layer avoids having to write most :abbr:`SQL (Structured Query Language)`
-by hand and provides extensibility and security services\ [#rawsql]_.
+Un componente clave de Odoo es la capa :abbr:`ORM (Object-Relational Mapping)`.
+Esta capa evita tener que escribir a mano mucho del :abbr:`SQL (Structured Query Language)`
+y provee servicios de escalabilidad y seguridad\ [#rawsql]_.
 
-Business objects are declared as Python classes extending
-:class:`~openerp.models.Model` which integrates them into the automated
-persistence system.
+Los objetos de negocio son declarados como clases Python que extienden
+:class:`~openerp.models.Model` la cual los integra dentro del sistema de persistencia
+automático.
 
-Models can be configured by setting a number of attributes at their
-definition. The most important attribute is
-:attr:`~openerp.models.Model._name` which is required and defines the name for
-the model in the Odoo system. Here is a minimally complete definition of a
-model::
+Los módulos puede ser configurados fijando varios atributos en su definición.
+El atributo más importnate es
+:attr:`~openerp.models.Model._name` el cual es obligatorio y define el nombre del modelo
+en el sistema Odoo. Aquí se muestra una definición minimalista de un
+modelo::
 
     from openerp import models
     class MinimalModel(models.Model):
         _name = 'test.model'
 
-Model fields
-------------
+Campos del modelo
+-----------------
 
-Fields are used to define what the model can store and where. Fields are
-defined as attributes on the model class::
+Los campos son usados para definir lo que el modelo puede almacenar y donde. Los campos son
+definidos como atributos en la clase del modelo::
 
     from openerp import models, fields
 
@@ -149,84 +148,83 @@ defined as attributes on the model class::
 
         name = fields.Char()
 
-Common Attributes
+Atributos Comunes
 #################
 
-Much like the model itself, its fields can be configured, by passing
-configuration attributes as parameters::
+Así como el propio modelo, sus campos pueden ser configurados, passando
+atributos de configuración como parámetros::
 
     name = field.Char(required=True)
 
-Some attributes are available on all fields, here are the most common ones:
+Algunos atributos están disponibles para todos los campos, aquí estan los más comúnes:
 
 :attr:`~openerp.fields.Field.string` (``unicode``, default: field's name)
-    The label of the field in UI (visible by users).
+    La etiqueta del campo en la IU (visible para los usuarios y las usuarias).
 :attr:`~openerp.fields.Field.required` (``bool``, default: ``False``)
-    If ``True``, the field can not be empty, it must either have a default
-    value or always be given a value when creating a record.
+    Si es ``True``, el campo no puede estar vacío, puede tener un valor
+    predeterminado o debe darsele un valor siempre que se cree un registro.
 :attr:`~openerp.fields.Field.help` (``unicode``, default: ``''``)
-    Long-form, provides a help tooltip to users in the UI.
+    Forma larga, proporciona una herramienta de ayuda para los usuarios y las usuarias en la IU.
 :attr:`~openerp.fields.Field.index` (``bool``, default: ``False``)
-    Requests that Odoo create a `database index`_ on the column
+    Solocita que Odoo cree un `database index`_ en la columna.
 
-Simple fields
-#############
-
-There are two broad categories of fields: "simple" fields which are atomic
-values stored directly in the model's table and "relational" fields linking
-records (of the same model or of different models).
-
-Example of simple fields are :class:`~openerp.fields.Boolean`,
-:class:`~openerp.fields.Date`, :class:`~openerp.fields.Char`.
-
-Reserved fields
-###############
-
-Odoo creates a few fields in all models\ [#autofields]_. These fields are
-managed by the system and shouldn't be written to. They can be read if
-useful or necessary:
-
-:attr:`~openerp.fields.Model.id` (:class:`~openerp.fields.Id`)
-    the unique identifier for a record in its model
-:attr:`~openerp.fields.Model.create_date` (:class:`~openerp.fields.Datetime`)
-    creation date of the record
-:attr:`~openerp.fields.Model.create_uid` (:class:`~openerp.fields.Many2one`)
-    user who created the record
-:attr:`~openerp.fields.Model.write_date` (:class:`~openerp.fields.Datetime`)
-    last modification date of the record
-:attr:`~openerp.fields.Model.write_uid` (:class:`~openerp.fields.Many2one`)
-    user who last modified the record
-
-Special fields
+Campos simples
 ##############
 
-By default, Odoo also requires a ``name`` field on all models for various
-display and search behaviors. The field used for these purposes can be
-overridden by setting :attr:`~openerp.models.Model._rec_name`.
+Hay dos categorías de campos generales:: campos "simple" los cuales son valores
+atómicos almacenados directamente en la tabla del modelo y campos "relational" que enlazan
+registros (del mismo modelo o de diferentes modelos).
+
+Ejemplis de campos simples son :class:`~openerp.fields.Boolean`,
+:class:`~openerp.fields.Date`, :class:`~openerp.fields.Char`.
+
+Campos reservados
+#################
+
+Odoo crea unos cuantos campos en todos los modelos\ [#autofields]_. Estos campos son
+gestionados por el sistema y no debe escribirse en ellos. Pueden ser leídos si es
+de utilidad o necesario:
+
+:attr:`~openerp.fields.Model.id` (:class:`~openerp.fields.Id`)
+    el identificador único de un registro en su modelo
+:attr:`~openerp.fields.Model.create_date` (:class:`~openerp.fields.Datetime`)
+    la fecha de creación del registro
+:attr:`~openerp.fields.Model.create_uid` (:class:`~openerp.fields.Many2one`)
+    el usuario que crea el registro
+:attr:`~openerp.fields.Model.write_date` (:class:`~openerp.fields.Datetime`)
+    última fecha de modificación del registro
+:attr:`~openerp.fields.Model.write_uid` (:class:`~openerp.fields.Many2one`)
+    el usuario que modifica por última vez el registro
+
+Campos especiales
+#################
+
+De forma predeterminada, Odoo tambíen requiere un campo ``name`` en todos los modelos para varios
+comportamientos de visualización y bpusqueda. El campo usado para este propósito puede ser
+sobre-escrito configurando :attr:`~openerp.models.Model._rec_name`.
 
 .. exercise:: Define a model
 
-    Define a new data model *Course* in the *openacademy* module. A course
-    has a title and a description. Courses must have a title.
+    Deefine un nuevo modelo de datos *Course* en el módulo *openacademy*. Un curso
+    tiene un titulo y una descrición. Los cursos deben tener un título.
 
     .. only:: solutions
 
-        Edit the file ``openacademy/models.py`` to include a *Course* class.
+        Edite el archivo ``openacademy/models.py`` para incluir una clase *Course*.
 
         .. patch::
 
-Data files
-----------
+Archivos de datos
+-----------------
 
-Odoo is a highly data driven system. Although behavior is customized using
-Python_ code part of a module's value is in the data it sets up when loaded.
+Odoo es un sistema altamente controlado por datos. Aunque su comportamiento es personalizado usando
+códifo Python_  parte del valor de un módulo esta en los datos que son establecido cuendo es cargado.
 
-.. tip:: some modules exist solely to add data into Odoo
+.. tip:: algunos módulos existe solamente para agregar datos en Odoo
     :class: aphorism
 
-Module data is declared via :ref:`data files <reference/data>`, XML files with
-``<record>`` elements. Each ``<record>`` element creates or updates a database
-record.
+Los datos del módulo son declarados por :ref:`data files <reference/data>`, archivos XML con
+elementos ``<record>``. Cada elemento ``<record>`` crea o actualiza un registro de la base de datos.
 
 .. code-block:: xml
 
@@ -238,40 +236,39 @@ record.
         </data>
     <openerp>
 
-* ``model`` is the name of the Odoo model for the record
-* ``id`` is an :term:`external identifier`, it allows referring to the record
-  (without having to know its in-database identifier)
-* ``<field>`` elements have a ``name`` which is the name of the field in the
-  model (e.g. ``description``). Their body is the field's value.
+* ``model`` es el nombre del modelo Odoo para el registro
+* ``id`` es un :term:`external identifier`, permite referirse al registro
+  (son tener que saber su identificador dentro de la base de datos)
+* ``<field>`` los elementos tienen un ``name`` que es el nombre del campo en el
+  modelo (ej. ``description``). Su cuerpo es el valor del campo.
 
-Data files have to be declared in the manifest file to be loaded, they can
-be declared in the ``'data'`` list (always loaded) or in the ``'demo'`` list
-(only loaded in demonstration mode).
+Los archivos de datos tienen que ser declarados en el archivo de manifiesto para ser cargados, pueden ser
+declarados en la lista ``'data'`` (siempre cargados) o en la lista ``'demo'``
+(solo son cargados en modo de demostración).
 
 .. exercise:: Define demonstration data
 
-    Create demonstration data filling the *Courses* model with a few
-    demonstration courses.
+    Cree datos de demostración llenando el modelo *Courses* con unos pocos
+    cursos de demostración.
 
     .. only:: solutions
 
-        Edit the file ``openacademy/demo.xml`` to include some data.
+        Edite el archivo ``openacademy/demo.xml`` para incluir algunos datos.
 
         .. patch::
 
-Actions and Menus
------------------
+Acciones y Menús
+----------------
 
-Actions and menus are regular records in database, usually declared through
-data files. Actions can be triggered in three ways:
+Las acciones y los menús son registros regulares en la base de datos, usualmente se declaran 
+a tarvés de archivos de datos. Las acciones pueden ser desencadenadas en tres formas:
 
-#. by clicking on menu items (linked to specific actions)
-#. by clicking on buttons in views (if these are connected to actions)
-#. as contextual actions on object
+#. haciendo clic en los items del manú (enlazados a acciones específicas)
+#. haciendo clic en los botónes de las vistas (si están conectados a acciones)
+#. como acciones contextuales en un objeto
 
-Because menus are somewhat complex to declare there is a ``<menuitem>``
-shortcut to declare an ``ir.ui.menu`` and connect it to the corresponding
-action more easily.
+Debido a que los menús son de alguna manera comlejos de declarar existe un acceso directo a 
+``<menuitem>`` para declarar un ``ir.ui.menu`` y conectarlo más facilmente a la acción correspondiente.
 
 .. code-block:: xml
 
@@ -286,46 +283,46 @@ action more easily.
 .. danger::
     :class: aphorism
 
-    The action must be declared before its corresponding menu in the XML file.
+    La acción debe ser declarada antes que su menú correspondiente en el archivo XML.
 
-    Data files are executed sequentially, the action's ``id`` must be present
-    in the database before the menu can be created.
+    Los archivos de datos son ejecutados secuencialmente, el ``id`` de la acción debe estar
+    presente en la base de datos antes que el menú sea creado.
 
 .. exercise:: Define new menu entries
 
-    Define new menu entries to access courses and sessions under the
-    OpenAcademy menu entry. A user should be able to
+    Defina entradas nuevas de menú para acceder a los cursos y sesiones bajo el
+    menú OpenAcademy. Un usuario o uan usuaria debería ser capaz de
 
-    - display a list of all the courses
-    - create/modify courses
+    - desplegar una lista de todos los cursos
+    - crear y modificar cursos
 
     .. only:: solutions
 
-        #. Create ``openacademy/views/openacademy.xml`` with an action and
-           the menus triggering the action
-        #. Add it to the ``data`` list of ``openacademy/__openerp__.py``
+        #. Cree ``openacademy/views/openacademy.xml`` con una acción y los
+           menús que desencadenan la acción
+        #. Agregelo a la lista ``data`` en ``openacademy/__openerp__.py``
 
         .. patch::
 
-Basic views
-===========
+Visas básicas
+=============
 
-Views define the way the records of a model are displayed. Each type of view
-represents a mode of visualization (a list of records, a graph of their
-aggregation, …). Views can either be requested generically via their type
-(e.g. *a list of partners*) or specifically via their id. For generic
-requests, the view with the correct type and the lowest priority will be
-used (so the lowest-priority view of each type is the default view for that
-type).
+Las vistas definen la forma como los registros del modelo son visualizados. Cada tipo de vista
+representa un modo de visualización (una lista de registros, un gráfico de su colección,...).
+Las vistas también pueden ser solicitadas genericamente por su tipo
+(ej. *una lista de socios*) o específicamente por su id. Para solicitudes
+generales, la vista con el tipo correcto y la prioridad mas baja será
+usada (por lo tanto la vista con prioridad mas baja de cada tipo es la vista predeterminada
+para ese tipo).
 
-:ref:`View inheritance <reference/views/inheritance>` allows altering views
-declared elsewhere (adding or removing content).
+:ref:`View inheritance <reference/views/inheritance>` permite alterar las vistas
+declaradas en cualquier parte (agregando o eliminando contenido).
 
-Generic view declaration
-------------------------
+Declaración de vista genérica
+-----------------------------
 
-A view is declared as a record of the model ``ir.ui.view``. The view type
-is implied by the root element of the ``arch`` field:
+Una vista es declarada como un registro del modelo ``ir.ui.view``. El tipo de vista
+es sobreentendido por el elemento raíz del campo ``arch``:
 
 .. code-block:: xml
 
@@ -341,16 +338,16 @@ is implied by the root element of the ``arch`` field:
 .. danger:: The view's content is XML.
     :class: aphorism
 
-    The ``arch`` field must thus be declared as ``type="xml"`` to be parsed
-    correctly.
+    El campo ``arch`` debe ser declarado como ``type="xml"``para ser analizado
+    correctamente.
 
-Tree views
-----------
+Vistas de árbol
+---------------
 
-Tree views, also called list views, display records in a tabular form.
+Las vistas de árbol, también llamadas vistas de lista, despliegan los registros en forma tabular.
 
-Their root element is ``<tree>``. The simplest form of the tree view simply
-lists all the fields to display in the table (each field as a column):
+Su elemento raíz es ``<tree>``. La forma más simple de la vista de árbol únicamente
+lista todos los campos en la tabla (cada campos como una columna):
 
 .. code-block:: xml
 
@@ -359,14 +356,14 @@ lists all the fields to display in the table (each field as a column):
         <field name="inventor_id"/>
     </tree>
 
-Form views
-----------
+Vistas de formulario
+--------------------
 
-Forms are used to create and edit single records.
+Los formularios son usados para crear y editar un solo registro.
 
 
-Their root element is ``<form>``. They composed of high-level structure
-elements (groups, notebooks) and interactive elements (buttons and fields):
+Su elementos raíz es ``<form>``. Se componen de elementos altamente
+estructurados (groups, notebooks) y elementos interactivos (buttons y fields):
 
 .. code-block:: xml
 
@@ -396,8 +393,8 @@ elements (groups, notebooks) and interactive elements (buttons and fields):
 
 .. exercise:: Customise form view using XML
 
-    Create your own form view for the Course object. Data displayed should be:
-    the name and the description of the course.
+    Cree su propia vista de formulario para el objeto Course. Los datos desplegados deben ser:
+    el nombre y la descripción del curso.
 
     .. only:: solutions
 
@@ -405,17 +402,16 @@ elements (groups, notebooks) and interactive elements (buttons and fields):
 
 .. exercise:: Notebooks
 
-    In the Course form view, put the description field under a tab, such that
-    it will be easier to add other tabs later, containing additional
-    information.
+    En la vista de formulario de Course, ponga el campo de descripción debajo de una pestaña, asi
+    será más fácil agregar luego otras pestañas, que contenga información adicional.
 
     .. only:: solutions
 
-        Modify the Course form view as follows:
+        Modifique la vista de formulario de Course como sigue:
 
         .. patch::
 
-Form views can also use plain HTML for more flexible layouts:
+Las vistas de formulario también pueden usar HTML plano para diseños más flexibles:
 
 .. code-block:: xml
 
@@ -441,12 +437,12 @@ Form views can also use plain HTML for more flexible layouts:
         </sheet>
     </form>
 
-Search views
-------------
+Vistas de búsqueda
+------------------
 
-Search views customize the search field associated with the list view (and
-other aggregated views). Their root element is ``<search>`` and they're
-composed of fields defining which fields can be searched on:
+Las vistas de búsqueda personalizan el campo de búsqueda asociado con la vista de lista (y
+otras vistas agregadas). Su elemento raíz es ``<search>`` y estan compuestas
+de campos que definen cuales campos pueden ser buscados:
 
 .. code-block:: xml
 
@@ -455,149 +451,150 @@ composed of fields defining which fields can be searched on:
         <field name="inventor_id"/>
     </search>
 
-If no search view exists for the model, Odoo generates one which only allows
-searching on the ``name`` field.
+Si no existe una vista de búsqueda para el modelo, Odoo genera una que solo permite
+búscar en el campo de ``name``.
 
 .. exercise:: Search courses
 
-    Allow searching for courses based on their title or their description.
+    Permita la bpusqueda por cursos basda en su título o su descripción.
 
     .. only:: solutions
 
         .. patch::
 
-Relations between models
+Relaciones entre modelos
 ========================
 
-A record from a model may be related to a record from another model. For
-instance, a sale order record is related to a client record that contains the
-client data; it is also related to its sale order line records.
+Un registro de un modelo puede estar relacionado a un registro desde otro modelo. Por
+lo tanto, un registro de una orden de venta esta relacionada a un registro de un cliente
+que contiene los datos del cliente; también esta relacionado a sus registros de linea de 
+la orden de compra.
 
 .. exercise:: Create a session model
 
-    For the module Open Academy, we consider a model for *sessions*: a session
-    is an occurrence of a course taught at a given time for a given audience.
+    Para el módulo Open Academy, consideremos un modelo para *sessions*: una sessión
+    es la ocurrencia de un curso en un tiempo dada y para una audiencia determinada.
 
-    Create a model for *sessions*. A session has a name, a start date, a
-    duration and a number of seats. Add an action and a menu item to display
-    them. Make the new model visible via a menu item.
+    Cree un modelo para *sessions*. Una sesión tiene un nombre, una fecha de inicio, una
+    duración y un número de asientos. Agregue una acción y un item de menú para desplegarlos.
+    Haga que el modelo nuevo sea visible a través de un item de menú.
 
     .. only:: solutions
 
-        #. Create the class *Session* in ``openacademy/models.py``.
-        #. Add access to the session object in ``openacademy/view/openacademy.xml``.
+        #. Cree la clase *Session* in ``openacademy/models.py``.
+        #. Agregue el acceso al objeto de sesión en ``openacademy/view/openacademy.xml``.
 
         .. patch::
 
-        .. note:: ``digits=(6, 2)`` specifies the precision of a float number:
-                  6 is the total number of digits, while 2 is the number of
-                  digits after the comma. Note that it results in the number
-                  digits before the comma is a maximum 4
+        .. note:: ``digits=(6, 2)`` especifica la precisión de un número decimal:
+                  6 es el número total de digitos, mientras que 2 es el número de 
+                  digitos despues de la coma. Note que el número de dígitos antes 
+                  de la coma es de un máximo de 4
 
-Relational fields
------------------
+Campos relacionados
+-------------------
 
-Relational fields link records, either of the same model (hierarchies) or
-between different models.
+Los campos relacionados enlazan registros, del mismo modelo (jerarquías) o
+entre modelos diferentes.
 
-Relational field types are:
+Los tipos de campos relacionales son:
 
 :class:`Many2one(other_model, ondelete='set null') <openerp.fields.Many2one>`
-    A simple link to an other object::
+    Un enlace simple a otro objeto::
 
         print foo.other_id.name
 
     .. seealso:: `foreign keys <http://www.postgresql.org/docs/9.3/static/tutorial-fk.html>`_
 
 :class:`One2many(other_model, related_field) <openerp.fields.One2many>`
-    A virtual relationship, inverse of a :class:`~openerp.fields.Many2one`.
-    A :class:`~openerp.fields.One2many` behaves as a container of records,
-    accessing it results in a (possibly empty) set of records::
+    Una relación virtual, inversa de una :class:`~openerp.fields.Many2one`.
+    Una :class:`~openerp.fields.One2many` se comporta como un contenedos de registros,
+    el acceso a ella resulta en un conjunto de registros (posiblemente vacío) ::
 
         for other in foo.other_ids:
             print other.name
 
     .. danger::
 
-        Because a :class:`~openerp.fields.One2many` is a virtual relationship,
-        there *must* be a :class:`~openerp.fields.Many2one` field in the
-        :samp:`{other_model}`, and its name *must* be :samp:`{related_field}`
+        Debido a que una :class:`~openerp.fields.One2many` es una relación virtual,
+        *Debe* haber un campo :class:`~openerp.fields.Many2one` en el
+        :samp:`{other_model}`, y su nombre *debe* ser :samp:`{related_field}`
 
 :class:`Many2many(other_model) <openerp.fields.Many2many>`
-    Bidirectional multiple relationship, any record on one side can be related
-    to any number of records on the other side. Behaves as a container of
-    records, accessing it also results in a possibly empty set of records::
+    Relación multiple bidireccional, cualquier registro en un lado puede estar relacionado
+    a cualquier cantidad de registros en el otro lado. Se comporta como un contendor de 
+    registros, el acceso a ella resulta en un conjunto de registros posiblemente vacío::
 
         for other in foo.other_ids:
             print other.name
 
 .. exercise:: Many2one relations
 
-    Using a many2one, modify the *Course* and *Session* models to reflect their
-    relation with other models:
+    Use many2one, para modificar los modelos *Course* y *Session*  y reflejar su
+    relación con otros modelos:
 
-    - A course has a *responsible* user; the value of that field is a record of
-      the built-in model ``res.users``.
-    - A session has an *instructor*; the value of that field is a record of the
-      built-in model ``res.partner``.
-    - A session is related to a *course*; the value of that field is a record
-      of the model ``openacademy.course`` and is required.
-    - Adapt the views.
+    - Un curso tiene un usuario *responsable*; el valor de ese campo es un registro
+      del modelo pre-construido ``res.users``.
+    - Una sessión tiene un *instructor*; el valor de ese campo es un registro del
+      modelo pre-construido ``res.partner``.
+    - Una sesión esta relacionada a un *course*; el valor de ese campo es un registro
+      del modelo ``openacademy.course`` y es obligatorio.
+    - Adapte las vistas.
 
     .. only:: solutions
 
-        #. Add the relevant ``Many2one`` fields to the models, and
-        #. add them in the views.
+        #. Agregue los campos ``Many2one`` relevantes a los modelos, y
+        #. agreguelos a las vistas.
 
         .. patch::
 
 .. exercise:: Inverse one2many relations
 
-    Using the inverse relational field one2many, modify the models to reflect
-    the relation between courses and sessions.
+    Use el campo relacional inverso one2many, para modificar los modelos y reflejar
+    la relación entre los cursos y las sesiones.
 
     .. only:: solutions
 
-        #. Modify the ``Course`` class, and
-        #. add the field in the course form view.
+        #. Modifique la clase ``Course``, y
+        #. y agregue el campo en la vista de formulario del curso
 
         .. patch::
 
 .. exercise:: Multiple many2many relations
 
-    Using the relational field many2many, modify the *Session* model to relate
-    every session to a set of *attendees*. Attendees will be represented by
-    partner records, so we will relate to the built-in model ``res.partner``.
-    Adapt the views accordingly.
+    Use el campo relacional many2many, para modificar el modelo *Session* y relacionar
+    cada sesión a un conjunto de *attendees*. Los asistentes seran representados por los 
+    registros de socio, asi que haremos una relación con el modelo pre-construido ``res.partner``.
+    Adapte las vistas.
 
     .. only:: solutions
 
-        #. Modify the ``Session`` class, and
-        #. add the field in the form view.
+        #. Modifique la clase ``Session``, y
+        #. agregue el campo en la vista de formulario.
 
         .. patch::
 
-Inheritance
+Herencia
 ===========
 
-Model inheritance
------------------
+Herencia del modelo
+-------------------
 
-Odoo provides two *inheritance* mechanisms to extend an existing model in a
-modular way.
+Odoo provee dos mecanismos de *herencia* para ampliar un modelo existente de
+forma modular.
 
-The first inheritance mechanism allows a module to modify the behavior of a
-model defined in another module:
+El primer mecanismo de herencia permite a un módulo modificar el comportamiento
+de un modelo definido en otro módulo:
 
-- add fields to a model,
-- override the definition of fields on a model,
-- add constraints to a model,
-- add methods to a model,
-- override existing methods on a model.
+- agrega campos a un modelo,
+- sobre-escribe la definición de los campos en un modelo,
+- agrega una restricción a un modelo,
+- agrega métodos a un modelo,
+- sobre-escribe los métodos existentes en un modelo.
 
-The second inheritance mechanism (delegation) allows to link every record of a
-model to a record in a parent model, and provides transparent access to the
-fields of the parent record.
+El segundo mecanismo de herencia (delegación) permite enlazar cada registro
+de un modelo a un registro en el modelo padre, y proporciona acceso transparente
+a los campos del registro padre.
 
 .. image:: ../images/inheritance_methods.png
     :align: center
@@ -607,16 +604,16 @@ fields of the parent record.
     * :attr:`~openerp.models.Model._inherit`
     * :attr:`~openerp.models.Model._inherits`
 
-View inheritance
-----------------
+Herencia de vistas
+------------------
 
-Instead of modifying existing views in place (by overwriting them), Odoo
-provides view inheritance where children "extension" views are applied on top of
-root views, and can add or remove content from their parent.
+En vez de modificar las vistas existentes en el mismo lugar (sobre-escribiendolas), Odoo
+provee herencia de vista donde las "extensiónes" de vistas hijas son aplicadas en
+las vistas raíz, y pueden agregar o eliminar contenido desde su padre.
 
-An extension view references its parent using the ``inherit_id`` field, and
-instead of a single view its ``arch`` field is composed of any number of
-``xpath`` elements selecting and altering the content of their parent view:
+Una vista de extensión hace referencia a su padre usando el campo ``inherit_id``, y
+en vez de una sola vista su campo ``arch`` es compuesto de cualquier cantidad de
+elementos ``xpath`` seleccionando y alterando el contenido de su vista padre:
 
 .. code-block:: xml
 
@@ -635,22 +632,22 @@ instead of a single view its ``arch`` field is composed of any number of
     </record>
 
 ``expr``
-    An XPath_ expression selecting a single element in the parent view.
-    Raises an error if it matches no element or more than one
+    Una expresión XPath_ que selecciona un único elemento en la vista padre.
+    Arroja un error si no encuentra coincidencia con algún elemento o coincide con mas de uno
 ``position``
-    Operation to apply to the matched element:
+    Operación que es aplicada al elemento coincidente:
 
     ``inside``
-        appends ``xpath``'s body at the end of the matched element
+        añade el cuerpo del ``xpath`` al final del elemento coincidente
     ``replace``
-        replaces the matched element by the ``xpath``'s body
+        reemplaza el elemento coincidente por el cuerpo del ``xpath``
     ``before``
-        inserts the ``xpath``'s body as a sibling before the matched element
+        inserta el cuerpo del ``xpath`` como hermano despues del elemento coincidente
     ``after``
-        inserts the ``xpaths``'s body as a sibling after the matched element
+        inserta el cuerpo del ``xpaths`` como un hermano despues del elemento coincidente
     ``attributes``
-        alters the attributes of the matched element using special
-        ``attribute`` elements in the ``xpath``'s body
+        modifica los atributos del elemento coincidente usando los elementos espaciales
+        ``attribute`` en el cuerpo del ``xpath``
 
 .. tip::
 
