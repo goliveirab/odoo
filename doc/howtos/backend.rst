@@ -651,8 +651,9 @@ elementos ``xpath`` seleccionando y alterando el contenido de su vista padre:
 
 .. tip::
 
-    When matching a single element, the ``position`` attribute can be set directly
-    on the element to be found. Both inheritances below will give the same result.
+    Cuando se hace coincidir con un unico elemento, el atributo ``position`` puede ser
+    fijado directamente al elemento buscado. Ambas herencias produciran el mismo 
+    resultado.
 
     .. code-block:: xml
 
@@ -665,20 +666,19 @@ elementos ``xpath`` seleccionando y alterando el contenido de su vista padre:
         </field>
 
 
-.. exercise:: Alter existing content
+.. exercise:: Alterar contenido existente
 
-    * Using model inheritance, modify the existing *Partner* model to add an
-      ``instructor`` boolean field, and a many2many field that corresponds to
-      the session-partner relation
-    * Using view inheritance, display this fields in the partner form view
+    * Use la herencia por el modelo, y modifique el modelo *Partner* existente para agregar
+      un campo booleano ``instructor``, y un campo many2many que corresponda a la relación
+      session-partner
+    * Use la herecia por vista, y muestre estos campos en la vista formulario de partner
 
     .. only:: solutions
 
        .. note::
 
-           This is the opportunity to introduce the developer mode to
-           inspect the view, find its external ID and the place to put the
-           new field.
+           Esta es la oportunidad de introducir el modo de desarrollo para inspeccionar
+           la vista, encuentre el ID externo y el lugar para colocar el nuevo campo.
 
        #. Create a file ``openacademy/partner.py`` and import it in
           ``__init__.py``
@@ -687,23 +687,24 @@ elementos ``xpath`` seleccionando y alterando el contenido de su vista padre:
 
        .. patch::
 
-Domains
-#######
+Dominios
+########
 
-In Odoo, :ref:`reference/orm/domains` are values that encode conditions on
-records. A domain is a  list of criteria used to select a subset of a model's
-records. Each criteria is a triple with a field name, an operator and a value.
+En Odoo, :ref:`reference/orm/domains` son valores que codifican condiciones en
+lso registros. Un dominio es una lista de criterios usada para seleccionar un 
+subconjunto de registros de un modelo. Cada criterio es un triple con un nombre 
+de campo, un operador y un valor.
 
-For instance, when used on the *Product* model the following domain selects
-all *services* with a unit price over *1000*::
+Por ejemplo, cuando se uso en el modelo *Product* los siguientes dominios seleccionan
+todos los *services* con un precio unitario sobre los *1000*::
 
     [('product_type', '=', 'service'), ('unit_price', '>', 1000)]
 
-By default criteria are combined with an implicit AND. The logical operators
-``&`` (AND), ``|`` (OR) and ``!`` (NOT) can be used to explicitly combine
-criteria. They are used in prefix position (the operator is inserted before
-its arguments rather than between). For instance to select products "which are
-services *OR* have a unit price which is *NOT* between 1000 and 2000"::
+De forma predeterminanda el criterio es combinado con un AND implícito. Los operadores
+lógicos ``&`` (AND), ``|`` (OR) y ``!`` (NOT) pueden usarse para combinar el criterio
+explicitamente. Son usados como prefijo (el operador es insertado antes de los argumentos) 
+Por ejemplo, para seleccionar los productos "que son services *O* tiene un precio unitario
+el cual *NO* este entre 1000 y 2000"::
 
     ['|',
         ('product_type', '=', 'service'),
@@ -711,13 +712,14 @@ services *OR* have a unit price which is *NOT* between 1000 and 2000"::
             ('unit_price', '>=', 1000),
             ('unit_price', '<', 2000)]
 
-A ``domain`` parameter can be added to relational fields to limit valid
-records for the relation when trying to select records in the client interface.
+Un parametro ``domain`` puede agregarse a los campos relacionales para limitar los registros
+válidos para la relación cuando se esta tratando de seleccionar registros en la interfaz del 
+cliente.
 
 .. exercise:: Domains on relational fields
 
-    When selecting the instructor for a *Session*, only instructors (partners
-    with ``instructor`` set to ``True``) should be visible.
+    Cuando se selecciona el instructor para un *Session*, solo los instructores (socios con
+    ``instructor`` fijado a ``True``) deben estar visibles.
 
     .. only:: solutions
 
@@ -725,21 +727,21 @@ records for the relation when trying to select records in the client interface.
 
         .. note::
 
-            A domain declared as a literal list is evaluated server-side and
-            can't refer to dynamic values on the right-hand side, a domain
-            declared as a string is evaluated client-side and allows
-            field names on the right-hand side
+            Un dominio declarado como una lista lliteral es evaluado del lado del servidor y
+            no puede puede hacer referencia a valores dinámicos del lado derecho, un dominio
+            declarado como cadena es evaluado del lado del cliente y permite nombres de campo
+            en el lado derecho.
 
 .. exercise:: More complex domains
 
-    Create new partner categories *Teacher / Level 1* and *Teacher / Level 2*.
-    The instructor for a session can be either an instructor or a teacher
-    (of any level).
+    Cree unas categorías nuevas de partnet *Teacher / Level 1* y *Teacher / Level 2*.
+    El isntructor para una sessión puede ser un instructor o un profesor (de 
+    cualquier nivel).
 
     .. only:: solutions
 
-        #. Modify the *Session* model's domain
-        #. Modify ``openacademy/view/partner.xml`` to get access to
+        #. Modifique el dominio del modelo *Session*
+        #. Modifique el archivo ``openacademy/view/partner.xml`` para tener acceso a 
            *Partner categories*:
 
         .. patch::
